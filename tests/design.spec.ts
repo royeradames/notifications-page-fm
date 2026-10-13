@@ -197,3 +197,36 @@ test("unread rows and group links show a hover change", async ({ page }) => {
   await group.hover();
   await expect(group).toHaveCSS("text-decoration-line", "underline");
 });
+
+test("hovering an unread row keeps its avatar on top of the tint", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".mark-read").first().hover({ position: { x: 600, y: 10 } });
+  const onTop = await page.locator(".notification.is-unread .notification-avatar").first().evaluate((img) => {
+    const r = img.getBoundingClientRect();
+    // The avatar ignores pointer events in the app; let it take part in hit testing for this check.
+    (img as HTMLElement).style.pointerEvents = "auto";
+    return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === img;
+  });
+  expect(onTop).toBe(true);
+});
+
+test("text on a hovered unread row passes 4.5:1 against the tint", async ({ page }) => {
+  await page.goto("/");
+  const button = page.locator(".mark-read").first();
+  await button.hover({ position: { x: 600, y: 10 } });
+  const ratios = await button.evaluate((el) => {
+    const parse = (c: string) => c.match(/\d+(\.\d+)?/g)!.slice(0, 3).map(Number);
+    const lum = (rgb: number[]) => {
+      const [r, g, b] = rgb.map((v) => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const bg = lum(parse(getComputedStyle(el).backgroundColor));
+    return [...el.parentElement!.querySelectorAll(".notification-content *")].filter((n) => n.childNodes.length && [...n.childNodes].some((c) => c.nodeType === 3 && c.textContent!.trim())).map((n) => {
+      const fg = lum(parse(getComputedStyle(n).color));
+      const [a, b] = [fg, bg].sort((x, y) => y - x);
+      return (a + 0.05) / (b + 0.05);
+    });
+  });
+  expect(ratios.length).toBeGreaterThan(0);
+  for (const ratio of ratios) expect(ratio).toBeGreaterThanOrEqual(4.5);
+});
