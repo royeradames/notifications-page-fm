@@ -185,3 +185,15 @@ test("visible text passes 4.5:1 at rest, on hover and after marking everything r
   await expect(page.locator(".read-note")).toBeVisible();
   for (const pair of await textContrast(page)) expect(pair.ratio, pair.text).toBeGreaterThanOrEqual(4.5);
 });
+
+test("unread rows and group links show a hover change", async ({ page }) => {
+  await page.goto("/");
+  const row = page.locator(".mark-read").first();
+  const before = await row.evaluate((el) => getComputedStyle(el).backgroundColor);
+  await row.hover({ position: { x: 600, y: 10 } });
+  await expect.poll(() => row.evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(before);
+  for (const pair of await textContrast(page)) expect(pair.ratio, `row hover: ${pair.text}`).toBeGreaterThanOrEqual(4.5);
+  const group = page.locator(".group-link").first();
+  await group.hover();
+  await expect(group).toHaveCSS("text-decoration-line", "underline");
+});
