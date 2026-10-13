@@ -1,4 +1,4 @@
-import { NotificationsPage } from "./notifications-page";
+import { NotificationsPage } from "./notifications-panel";
 import { challengeUrl } from "./site";
 
 export default function Home() {
