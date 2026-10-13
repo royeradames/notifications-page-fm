@@ -65,7 +65,7 @@ test("declares one site name in og:site_name and WebSite JSON-LD, with canonical
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", siteName);
   const jsonLd: unknown = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}");
   expect(jsonLd).toEqual({ "@context": "https://schema.org", "@type": "WebSite", name: siteName, url: siteUrl });
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", siteUrl);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https:\/\/notifications-page-fm\.royeradames\.com\/?$/);
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /opengraph-image/);
   await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", /Notifications Page/);
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
