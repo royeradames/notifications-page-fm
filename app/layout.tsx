@@ -3,9 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { siteName, siteUrl } from "./site";
 
-// Fonts aren't preloaded: text paints at once in next/font's size-matched fallback (display: swap), so the
-// font files needn't compete with the first paint.
-const jakarta = Plus_Jakarta_Sans({ preload: false, subsets: ["latin"], weight: ["500", "800"], variable: "--font-jakarta", display: "swap" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["500", "800"], variable: "--font-jakarta", display: "swap" });
 
 const title = "Notifications | Notifications Page";
 const description =
