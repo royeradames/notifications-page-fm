@@ -1,6 +1,6 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- next/image added client JavaScript here without optimizing anything (SVGs, data URLs or unoptimized files). */
 
-import Image from "next/image";
 import { useRef, useState } from "react";
 
 type Notification = {
@@ -96,7 +96,7 @@ export function NotificationsPage() {
                   <span className="sr-only">Mark as read: {notification.name}</span>
                 </button>
               )}
-              <Image className="notification-avatar" src={`/images/avatar-${notification.id}.webp`} alt="" width={45} height={45} />
+              <img className="notification-avatar" src={`/images/avatar-${notification.id}.webp`} alt="" width={45} height={45} loading="lazy" decoding="async" />
               <div className="notification-content">
                 <p className="notification-text">
                   <a className="person-link" href="#">{notification.name}</a>{" "}
@@ -111,7 +111,7 @@ export function NotificationsPage() {
               </div>
               {notification.detail.kind === "picture" && (
                 <a href="#" className="picture-link">
-                  <Image src="/images/image-chess.webp" alt={notification.detail.alt} width={45} height={45} />
+                  <img src="/images/image-chess.webp" alt={notification.detail.alt} width={45} height={45} loading="lazy" decoding="async" />
                 </a>
               )}
             </li>
